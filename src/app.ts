@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import { config } from './config/environment';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware';
 import logger from './config/logger';
+import routes from './routes/index';
 
 const app: Application = express();
 
@@ -38,17 +39,6 @@ if (config.isDevelopment) {
   );
 }
 
-// Health check endpoint
-app.get('/health', (_req, res) => {
-  res.json({
-    success: true,
-    message: 'CloudVault API is running',
-    timestamp: new Date().toISOString(),
-    environment: config.isDevelopment ? 'development' : 'production',
-    uptime: process.uptime(),
-  });
-});
-
 // API version info
 app.get('/', (_req, res) => {
   res.json({
@@ -62,8 +52,7 @@ app.get('/', (_req, res) => {
   });
 });
 
-// API routes will be added here in Exercise 2
-// app.use('/api', routes);
+app.use('/api', routes);
 
 // Error handling
 app.use(notFoundHandler);
