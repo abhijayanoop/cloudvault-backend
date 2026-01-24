@@ -1,8 +1,12 @@
 import express from 'express';
 import authRoutes from './auth.routes';
+import documentRoutes from './document.routes';
 import { config } from '../config/environment';
 
 const router = express.Router();
+
+router.use('/auth', authRoutes);
+router.use('/documents', documentRoutes);
 
 router.get('/', (_req, res) => {
   res.json({
@@ -25,7 +29,5 @@ router.get('/health', (_req, res) => {
     uptime: process.uptime(),
   });
 });
-
-router.use('/auth', authRoutes);
 
 export default router;

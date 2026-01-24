@@ -3,6 +3,8 @@ import { connectDatabase } from './config/database';
 import { config } from './config/environment';
 import logger from './config/logger';
 
+import './models';
+
 /**
  * Start the server
  */

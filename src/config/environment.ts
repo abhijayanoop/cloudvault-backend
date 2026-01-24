@@ -24,11 +24,11 @@ const envSchema = z.object({
   ARCJET_KEY: z.string().min(1, 'Arcjet API key is required'),
   ARCJET_ENV: z.string().default('development'),
 
-  // AWS S3 (optional for now)
-  AWS_REGION: z.string().optional(),
-  AWS_ACCESS_KEY_ID: z.string().optional(),
-  AWS_SECRET_ACCESS_KEY: z.string().optional(),
-  S3_BUCKET_NAME: z.string().optional(),
+  // AWS S3
+  AWS_REGION: z.string().min(1, 'AWS region is required'),
+  AWS_ACCESS_KEY_ID: z.string().min(1, 'AWS access key is required'),
+  AWS_SECRET_ACCESS_KEY: z.string().min(1, 'AWS secret key is required'),
+  S3_BUCKET_NAME: z.string().min(1, 'S3 bucket name is required'),
 
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: z.string().default('900000'),
@@ -39,6 +39,9 @@ const envSchema = z.object({
 
   // File Upload
   MAX_FILE_SIZE: z.string().default('52428800'), // 50MB
+  ALLOWED_FILE_TYPES: z
+    .string()
+    .default('image/jpeg,image/png,application/pdf'),
 
   // Logging
   LOG_LEVEL: z
@@ -47,7 +50,6 @@ const envSchema = z.object({
     .optional(),
 });
 
-// This ensures the parsed result has the correct types
 type EnvSchema = z.infer<typeof envSchema>;
 
 const parseEnv = (): EnvSchema => {
@@ -91,4 +93,13 @@ export const config = {
     refreshSecret: env.JWT_REFRESH_SECRET,
     refreshExpiresIn: env.JWT_REFRESH_EXPIRES_IN,
   },
-} as const;
+  aws: {
+    region: env.AWS_REGION,
+    accessKeyId: env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+    s3BucketName: env.S3_BUCKET_NAME,
+  },
+  allowedFileTypes: env.ALLOWED_FILE_TYPES.split(',').map((type) =>
+    type.trim()
+  ),
+};
